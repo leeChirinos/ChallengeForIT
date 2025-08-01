@@ -21,9 +21,10 @@ npm run dev
 
 <img width="597" height="303" alt="Image" src="https://github.com/user-attachments/assets/2ed60454-c7c0-4871-a614-13e24e497c4b" />
 
-##Lista de tareas
+## Lista de tareas
 
 <img width="653" height="548" alt="Image" src="https://github.com/user-attachments/assets/86fa83d7-7dc2-426f-a57f-f4258fe4ffa4" />
+
 ## filtro inicio
 
 <img width="578" height="289" alt="Image" src="https://github.com/user-attachments/assets/2d4b385f-602e-46fb-9569-56528d9c3a91" />
