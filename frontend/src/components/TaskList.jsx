@@ -4,7 +4,7 @@ import TaskItem from './TaskItem';
 
 function TaskList() {
   const [tasks, setTasks] = useState([]);
-  const [filter, setFilter] = useState('all'); // 'all', 'completed', 'pending'
+  const [filter, setFilter] = useState('all');
 
   const fetchTasks = async () => {
     try {
@@ -17,7 +17,7 @@ function TaskList() {
   };
 
   const handleDelete = async (id) => {
-    if (!confirm('¿Seguro que querés eliminar esta tarea?')) return;
+    if (!confirm('Una vez eliminada la tarea no se va recuperar?')) return;
 
     try {
       await fetch(`${import.meta.env.VITE_API_URL}/tasks/${id}`, {
@@ -30,9 +30,8 @@ function TaskList() {
   };
 
   const filteredTasks = tasks.filter((task) => {
-    if (filter === 'completed') return task.completed;
-    if (filter === 'pending') return !task.completed;
-    return true; // all
+    if (filter === 'all') return true;
+    return task.status === filter;
   });
 
   useEffect(() => {
@@ -43,8 +42,9 @@ function TaskList() {
     <div>
       <div style={{ marginBottom: '1rem' }}>
         <button onClick={() => setFilter('all')}>Todas</button>
-        <button onClick={() => setFilter('completed')}>Completadas ✅</button>
-        <button onClick={() => setFilter('pending')}>Pendientes ❌</button>
+        <button onClick={() => setFilter('iniciada')}>Iniciadas</button>
+        <button onClick={() => setFilter('en_proceso')}>En proceso</button>
+        <button onClick={() => setFilter('finalizada')}>Finalizadas</button>
       </div>
 
       {filteredTasks.length === 0 ? (

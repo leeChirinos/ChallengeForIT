@@ -3,55 +3,75 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 function TaskForm() {
   const [title, setTitle] = useState('');
+  const [status, setStatus] = useState('iniciada');
   const navigate = useNavigate();
   const { id } = useParams();
-  const isEditing = !!id;
 
-  // Cargar tarea si es edición
   useEffect(() => {
-    if (isEditing) {
-      fetch(`${import.meta.env.VITE_API_URL}/tasks`)
+    if (id) {
+      
+      fetch(`${import.meta.env.VITE_API_URL}/tasks/${id}`)
         .then(res => res.json())
         .then(data => {
-          const task = data.find(t => t.id === parseInt(id));
-          if (task) setTitle(task.title);
+          setTitle(data.title);
+          setStatus(data.status);
         })
-        .catch(err => console.error('Error al obtener la tarea:', err));
+        .catch(err => console.error('Error al cargar tarea:', err));
     }
-  }, [id, isEditing]);
+  }, [id]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const url = `${import.meta.env.VITE_API_URL}/tasks${isEditing ? `/${id}` : ''}`;
-    const method = isEditing ? 'PUT' : 'POST';
+    if (!title.trim()) return alert('El título es obligatorio');
 
     try {
-      await fetch(url, {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ title }),
-      });
-
+      if (id) {
+        
+        await fetch(`${import.meta.env.VITE_API_URL}/tasks/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ title, status }),
+        });
+      } else {
+       
+        await fetch(`${import.meta.env.VITE_API_URL}/tasks`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ title, status }),
+        });
+      }
       navigate('/');
     } catch (error) {
-      console.error('Error al guardar la tarea:', error);
+      console.error('Error guardando tarea:', error);
     }
   };
 
   return (
     <form onSubmit={handleSubmit}>
-      <h2>{isEditing ? 'Editar tarea' : 'Nueva tarea'}</h2>
-      <input
-        type="text"
-        placeholder="Título de la tarea"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        required
-      />
-      <button type="submit">{isEditing ? 'Actualizar' : 'Crear'}</button>
+      <label>
+        Nombre :
+        <input
+          type="text"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="Nombre de tarea"
+          required
+        />
+      </label>
+
+      <label>
+        Estado:
+        <select
+          value={status}
+          onChange={(e) => setStatus(e.target.value)}
+        >
+          <option value="iniciada">Iniciada</option>
+          <option value="en_proceso">En proceso</option>
+          <option value="finalizada">Finalizada</option>
+        </select>
+      </label>
+
+      <button type="submit">{id ? 'Actualizar tarea' : 'Crear tarea'}</button>
     </form>
   );
 }

@@ -1,19 +1,16 @@
+// index.js
 const express = require('express');
 const cors = require('cors');
-require('dotenv').config();
+const taskRoutes = require('./routes/tasks');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = 3000;
 
-// Middlewares
 app.use(cors());
 app.use(express.json());
 
-// Rutas
-const tasksRoutes = require('./routes/tasks');
-app.use('/api/tasks', tasksRoutes);
+app.use('/tasks', taskRoutes);
 
-// Inicio del servidor
 app.listen(PORT, () => {
-  console.log(`Servidor escuchando en http://localhost:${PORT}`);
+  console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });

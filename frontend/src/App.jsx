@@ -5,11 +5,11 @@ import './App.css';
 
 function App() {
   return (
-    <Router>
+        <Router>            
       <div className="container">
-        <h1>📝 Lista de Tareas</h1>
+        <h1> Gestor de Tareas </h1>
         <nav>
-          <Link to="/">Ver tareas</Link> | <Link to="/new">Nueva tarea</Link>
+          <Link to="/">Lista de tareas</Link> | <Link to="/new">Crear tarea</Link>
         </nav>
         <Routes>
           <Route path="/" element={<TaskList />} />

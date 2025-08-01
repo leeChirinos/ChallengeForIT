@@ -1,44 +1,42 @@
-let tasks = [];
-let idCounter = 1;
 
-const getTasks = (req, res) => {
+let tasks = [];
+let nextId = 1;
+
+exports.getAllTasks = (req, res) => {
   res.json(tasks);
 };
 
-const createTask = (req, res) => {
-  const { title } = req.body;
-  if (!title) return res.status(400).json({ error: 'Falta el título' });
+exports.getTaskById = (req, res) => {
+  const task = tasks.find(t => t.id === parseInt(req.params.id));
+  task ? res.json(task) : res.status(404).json({ error: ' ' });
+};
 
-  const newTask = { id: idCounter++, title, completed: false };
+exports.createTask = (req, res) => {
+  const { title, status } = req.body;
+  if (!title || !status) {
+    return res.status(400).json({ error: ' ' });
+  }
+  const newTask = { id: nextId++, title, status };
   tasks.push(newTask);
   res.status(201).json(newTask);
 };
 
-const updateTask = (req, res) => {
-  const { id } = req.params;
-  const { title, completed } = req.body;
+exports.updateTask = (req, res) => {
+  const { title, status } = req.body;
+  const task = tasks.find(t => t.id === parseInt(req.params.id));
+  if (!task) return res.status(404).json({ error: ' ' });
 
-  const task = tasks.find(t => t.id === parseInt(id));
-  if (!task) return res.status(404).json({ error: 'Tarea no encontrada' });
-
-  if (title !== undefined) task.title = title;
-  if (completed !== undefined) task.completed = completed;
-
+  if (title) task.title = title;
+  if (status) task.status = status;
   res.json(task);
 };
 
-const deleteTask = (req, res) => {
-  const { id } = req.params;
-  const index = tasks.findIndex(t => t.id === parseInt(id));
-  if (index === -1) return res.status(404).json({ error: 'Tarea no encontrada' });
-
-  const deleted = tasks.splice(index, 1);
-  res.json(deleted[0]);
-};
-
-module.exports = {
-  getTasks,
-  createTask,
-  updateTask,
-  deleteTask
+exports.deleteTask = (req, res) => {
+  const id = parseInt(req.params.id);
+  const initialLength = tasks.length;
+  tasks = tasks.filter(t => t.id !== id);
+  if (tasks.length === initialLength) {
+    return res.status(404).json({ error: ' ' });
+  }
+  res.status(204).end();
 };
